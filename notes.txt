@@ -1,0 +1,24 @@
+front end 
+
+react
+redux toolkit
+mui for styling
+mongodb
+strip for payment
+formik for form and vaildation
+yup
+dotenv
+react-responsive-carousel
+
+for material ui
+@mui/meterial
+@emotion/react
+@emotion/styled
+@mui/icons-material
+
+
+
+
+
+backend
+strapi (headless cms)
