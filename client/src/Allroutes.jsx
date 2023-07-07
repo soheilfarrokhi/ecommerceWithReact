@@ -4,6 +4,7 @@ import { Home } from "./views/Home";
 import { MainLayout } from "./layouts/MainLayout";
 import { ProductSingle } from "./views/ProductSingle";
 import { Checkout } from "./views/Checkout";
+import { Success } from "./views/Success";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -21,6 +22,7 @@ export const Allroutes = () => {
         <Route path={"/"} element={<MainLayout />}>
           <Route path={"/"} element={<Home />} />
           <Route path={"/checkout"} element={<Checkout />} />
+          <Route path={"/checkout/success"} element={<Success />} />
 
           <Route path={"/product/:id"} element={<ProductSingle />} />
         </Route>

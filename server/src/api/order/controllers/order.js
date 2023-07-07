@@ -1,6 +1,7 @@
 ("use strict");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// const stripe = require("stripe");
 
 /**
  * order controller
@@ -13,6 +14,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     const { products, userName, email } = ctx.request.body;
 
     try {
+      // retrive product info
       const lineItems = await Promise.all(
         products.map(async (product) => {
           const item = await strapi
@@ -26,14 +28,14 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
                 name: item.name,
               },
               unit_amount: item.price * 100,
-              quantitiy: product.count,
             },
+            quantity: product.count,
           };
         })
       );
 
       //   create strip session
-      const session = await stripe.checkout.session.create({
+      const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         customer_email: email,
         mode: "payment",
@@ -41,6 +43,8 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         cancel_url: "http://localhost:5173/",
         line_items: lineItems,
       });
+
+      console.log(session);
 
       //   create item order
       await strapi

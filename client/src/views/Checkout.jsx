@@ -10,7 +10,9 @@ import { FlexBetween } from "../components/mui/FlexBetween";
 import { loadStripe } from "@stripe/stripe-js";
 import { createdAxios } from "../createAxios/craatedAxios";
 
-const stripePromise = loadStripe(`${import.meta.env.VITE_STRIPE_TOKEN}`);
+const stripePromise = loadStripe(
+  "pk_test_51NRE9BIlp0ZxxctcdK0LuYWKQZLEw5DLbdwHinzMR6v2U0ZXHQ3mxmSf3mRMMTWdIP4VKUuVekiSby4RfraICGPu00sm6gZCG5"
+);
 
 const initialValues = {
   billingAddress: {
@@ -111,27 +113,48 @@ export const Checkout = () => {
     actions.setTouched({});
   };
   const makePayment = async (values) => {
+    console.log(values);
     try {
       const stripe = await stripePromise;
       const requestBody = {
-        userName: [values.firstName, values.lastName].join(" "),
-        email: values.email,
+        userName: [
+          values.billingAddress.firstName,
+          values.billingAddress.lastName,
+        ].join(" "),
+        email: values?.email,
         products: cart.map(({ id, count }) => ({
           id,
           count,
         })),
       };
 
-      const session = await createdAxios.post(`api/orders`, requestBody, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch("http://localhost:1337/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
       });
-      if (session) {
-        await stripe.redirectToCheckout({
-          sessionId: session.id,
-        });
-      }
+
+      console.log(response);
+      const session = await response.json();
+      console.log(session);
+      await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+
+      // const session = await createdAxios.post(
+      //   `api/orders`,
+      //   { ...requestBody },
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
+      // if (session) {
+      //   await stripe.redirectToCheckout({
+      //     sessionId: session.id,
+      //   });
+      // }
     } catch (err) {
       console.log(err);
     }
